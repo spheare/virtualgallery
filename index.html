@@ -1,0 +1,140 @@
+<html>
+
+<head>
+	<script src="scripts/aframe.min.js"></script>
+	<script src="scripts/aframe-eventset-component.min.js"></script>
+	<script src="scripts/aframe-template-component.min.js"></script>
+	<script src="scripts/components/automove.js"></script>
+	<script src="scripts/components/move-to-portal.js"></script>
+	<!-- <script src="scripts/aframe-inspector.min.js"></script> -->
+
+	<!-- <script src="https://unpkg.com/aframe-inspector@0.8.x/dist/aframe-inspector.min.js"></script> -->
+	<!-- <script src="//cdn.rawgit.com/donmccurdy/aframe-extras/v3.13.1/dist/aframe-extras.min.js"></script> -->
+	<!-- <script src="https://unpkg.com/aframe-environment-component@1.0.0/dist/aframe-environment-component.min.js"></script> -->
+	<!-- <script src="https://unpkg.com/aframe-animation-component@3.2.1/dist/aframe-animation-component.min.js"></script> -->
+	<!-- <script src="gpoly.js"></script> -->
+
+</head>
+
+<body>
+	<a-scene background="color:#ECECEC" inspector="scripts/aframe-inspector.min.js" class="fullscreen">
+
+		<!-- assets -->
+		<a-assets>
+			<audio id="click-sound" src="audio/click.ogg"></audio>
+			<img id="city" src="assets/city.jpg">
+			<img id="kitten1" src="http://placekitten.com/400/600">
+			<img id="kitten2" src="http://placekitten.com/200/300">
+		</a-assets>
+
+		<!-- template items -->
+		<template id="portal" type="text/html">
+			<a-cylinder   radius="0.5" height="0.02" color="#ff00ff"></a-cylinder>
+			<a-sphere material="transparent:true;opacity:0.5"  radius="0.2"  color="#00FFff">
+					<a-animation  easing="ease-out" repeat="indefinite"  attribute="scale" dur="1500"  from="0.1 0.1 0.1" to="1 1 1"></a-animation>
+					<a-animation  easing="ease-out" repeat="indefinite"  attribute="opacity" dur="1500"  from="1" to="0"></a-animation>
+			</a-sphere>
+		</template>
+
+		<template id="photoframe" type="text/html">
+			<a-box depth="0.001" height="2" width="3"></a-box>
+		</template>
+
+		<template id="click-area"  type="text/html">
+			<a-box material="color:red;transparent:true;opacity:0.1"
+				move-to-portal="cameraId:#camera; portalId:${destination}"
+				position="${position}"
+				depth="0.001" height="0.5"
+				width="0.5"></a-box>
+		</template>
+
+		<!-- scene -->
+		<a-plane position="0 0 -4" rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
+		<!--
+		<a-box move-to-portal="cameraId:#camera; portalId:#portal1" position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"
+		 event-set__makevisible="_event: mouseenter; color: #00ff00" event-set__leave="_event: mouseleave; color: #4CC3D9">
+			<a-animation begin="cursor-fusing" easing="ease-in" attribute="scale" dur="1500" fill="forwards" from="1 1 1" to="0.1 0.1 0.1"></a-animation>
+		</a-box>
+		<a-sphere move-to-portal="cameraId:#camera; portalId:#portal3" event-set__makevisible="_event: mouseenter; color: #00ff00"
+		 event-set__leave="_event: mouseleave; color: #EF2D5E" scale="1 1 1" position="0 1.25 -5" radius="1.25" color="#EF2D5E">
+
+		</a-sphere>
+		<a-cylinder event-set__makevisible="_event: mouseenter; color: #00ff00" event-set__leave="_event: mouseleave; color: #FFC65D"
+		 move-to-portal="cameraId:#camera; portalId:#portal2" position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D">
+		</a-cylinder> -->
+		<a-sky id="image-360" position="0 10 0" radius="15" src="#city"></a-sky>
+
+		<!-- image 1-->
+		<a-entity>
+
+			<a-entity template="src: #photoframe" position="0 2 -5"></a-entity>
+			<a-entity id="portal1" position="0 0 -3.5" template="src: #portal" move-to-portal="cameraId:#camera; portalId:#portal1"></a-entity>
+
+			<a-entity template="src:#click-area" data-destination="#portal2" data-position="0 2 -4.5">
+			</a-entity>
+
+		</a-entity>
+
+		<!-- image 2-->
+		<a-entity>
+			<a-entity template="src: #photoframe" position="4 2 -5"></a-entity>
+			<a-entity id="portal2" position="4 0 -3.5" template="src: #portal" move-to-portal="cameraId:#camera; portalId:#portal2"></a-entity>
+
+			<a-entity template="src:#click-area" data-destination="#portal1" data-position="4 2 -4.5">
+			</a-entity>
+
+		</a-entity>
+
+		<!--viewpoints -->
+
+		<!-- <a-cylinder id="portal1" class="portal" position="-2 0 4" radius="0.5" height="0.05" color="#ff00ff"></a-cylinder>
+		<a-cylinder id="portal2" class="portal" position="2 0 4" radius="0.5" height="0.05" color="#ff00ff"></a-cylinder>
+		<a-cylinder id="portal3" class="portal" position="2 0 7" radius="0.5" height="0.05" color="#ff00ff"></a-cylinder>
+		<a-cylinder id="portal4" class="portal" position="-2 0 7" radius="0.5" height="0.05" color="#ff00ff"></a-cylinder> -->
+
+		<!-- camera -->
+		<!-- <a-entity automove> -->
+		<a-entity id="camera">
+			<a-camera>
+				<!-- <a-box  position="0 0 -3" color="#ff0000" ></a-box> -->
+				<a-entity cursor="fuse: true;" position="0 0 -1" scale="0.05" geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+				 material="color: magenta; shader: flat">
+					<a-animation begin="cursor-fusing" easing="ease-in" attribute="scale" dur="1500" fill="backwards" from="1 1 1" to="0.1 0.1 0.1"></a-animation>
+					<a-animation begin="click" easing="ease-in" attribute="scale" dur="150" fill="forwards" from="0.1 0.1 0.1" to="1 1 1"></a-animation>
+				</a-entity>
+
+			</a-camera>
+		</a-entity>
+
+		<!-- <canvas class="a-canvas" data-aframe-canvas="true" width="600" height="300"></canvas>
+<a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+<a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+<a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+
+<a-entity camera="active:false;near:0.01" look-controls="" position="0 0 0" rotation="-11.573747461642629 0.8021409131831536 0">
+<a-cursor id="cursor" animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150" animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500" event-set__1="_event: mouseenter; color: springgreen" event-set__2="_event: mouseleave; color: black" raycaster="objects: .link" material="" cursor="" geometry="" color="springgreen"></a-cursor>
+</a-entity>
+
+
+
+<a-entity camera="userHeight: 1.6" universal-controls="movementControls: checkpoint"    checkpoint-controls="mode: animate">
+<a-entity position="0 0 -3"    geometry="primitive: ring; radiusOuter: 0.30;    radiusInner: 0.20;"    material="color: cyan; shader: flat"    cursor="maxDistance: 30; fuse: true">
+<a-animation begin="click" easing="ease-in" attribute="scale" fill="backwards" from="0.1 0.1 0.1" to="1 1 1" dur="150"></a-animation>
+<a-animation begin="fusing" easing="ease-in" attribute="scale"     fill="forwards" from="1 1 1" to="0.1 0.1 0.1" dur="1500"></a-animation>
+</a-entity>
+</a-entity>
+
+
+<a-entity position="1 1 1">
+<a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.1" position="0 0 -5.2" color="#CCCCCC"></a-cylinder>
+<a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.1" position="3 0 0" color="#CCCCCC"></a-cylinder>
+<a-cylinder checkpoint="offset: 0 1.6 0" radius="1" height="0.1" position="-3 0 0" color="#CCCCCC"></a-cylinder>
+<a-cylinder checkpoint="offset:0 1.6 0" radius="1" height="0.1" position="-3 0 13.063" color="#CCCCCC"></a-cylinder>
+</a-entity>
+-->
+
+	</a-scene>
+
+</body>
+
+</html>
